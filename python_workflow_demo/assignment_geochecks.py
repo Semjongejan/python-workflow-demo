@@ -116,6 +116,27 @@ def add_validation_errors(df):
     df["waardes"] = df["waardes"].apply(lambda x: introduce_error_waardes(x) if random.random() < 0.2 else x)
 
     return df
+from dateutil.parser import parse
+
+def dateformat_validation(df):
+    """
+    Validates the date format in the 'Tijdstip' column.
+
+    Args:
+        df (pd.DataFrame): DataFrame containing a 'Tijdstip' column.
+
+    Returns:
+        pd.DataFrame: The original DataFrame with an added 'valid_dateformat' column.
+    """
+    def is_valid_dateformat(date_str):
+        try:
+            parse(date_str)
+            return True
+        except Exception:
+            return False
+
+    df['valid_dateformat'] = df['Tijdstip'].apply(is_valid_dateformat)
+    return df
 
 
 def main():
@@ -126,6 +147,7 @@ def main():
     measurements = extract_measurements(data)
     df = process_measurements(measurements)
     df = add_validation_errors(df)
+    df = dateformat_validation(df)
     return df
 
 
